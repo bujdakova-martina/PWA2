@@ -19,6 +19,8 @@ Route::get('/', function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('courses', App\Http\Controllers\CourseController::class);
+    Route::delete('courses/force/{id}', [App\Http\Controllers\CourseController::class, 'forceDestroy'])->name('courses.forceDestroy');
+    Route::post('courses/restore/{id}', [App\Http\Controllers\CourseController::class, 'restore'])->name('courses.restore');
     Route::resource('departments', App\Http\Controllers\DepartmentsController::class);
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 });

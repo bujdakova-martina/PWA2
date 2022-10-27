@@ -15,7 +15,7 @@ class CourseController extends Controller
     public function index()
     {
        //$courses = Course::all();
-        $courses = Course::with('supervisor')->orderBy('title', 'asc')->get();
+        $courses = Course::with('supervisor')->withTrashed()->orderBy('title', 'asc')->get();
         return view('courses.index')->with('courses', $courses);
 
     }
@@ -65,6 +65,7 @@ class CourseController extends Controller
             return redirect()->back()->withInput();
         }   
     }
+
 
     /**
      * Display the specified resource.
@@ -142,4 +143,27 @@ class CourseController extends Controller
             return redirect()->back();
         }     
     }
+    public function forceDestroy($id)
+{
+    try {
+        Course::withTrashed()->find($id)->forceDelete();
+        session()->flash('success', 'Course was permanently deleted');
+        return redirect()->route('courses.index');
+    } catch (Exception $e) {
+        session()->flash('failure', $e->getMessage());
+        return redirect()->back();
+    }
+}
+
+public function restore($id)
+{
+    try {
+        Course::withTrashed()->find($id)->restore();
+        session()->flash('success', 'Course restored');
+        return redirect()->route('courses.index');
+    } catch (Exception $e) {
+        session()->flash('failure', $e->getMessage());
+        return redirect()->back();
+    }
+}
 }
